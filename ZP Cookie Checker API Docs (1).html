@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ZeroPoint Cookie Checker API Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#06060b; --s0:#0a0a12; --s1:#10101c; --s2:#161625; --accent:#22d3ee; --accent-dim:#0ea5b7;
+      --accent-ghost:rgba(34,211,238,0.07); --border:rgba(255,255,255,0.07); --border-accent:rgba(34,211,238,0.25);
+      --text:#e8e8f0; --text2:#8c8caa; --text3:#55556e; --warn:#ffd600; --ok:#22c55e; --err:#ff4d6d;
+      --mono:'IBM Plex Mono',monospace; --body:'DM Sans',sans-serif; --display:'Outfit',sans-serif;
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:var(--body);background:var(--bg);color:var(--text);line-height:1.6;}
+    .wrap{max-width:920px;margin:0 auto;padding:48px 24px 96px;}
+    header{border-bottom:1px solid var(--border);padding-bottom:28px;margin-bottom:40px;}
+    .badge{display:inline-block;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);
+      background:var(--accent-ghost);border:1px solid var(--border-accent);border-radius:9999px;padding:4px 12px;margin-bottom:16px;}
+    h1{font-family:var(--display);font-size:34px;font-weight:800;letter-spacing:-0.02em;}
+    h1 span{color:var(--accent);}
+    .sub{color:var(--text2);margin-top:8px;font-size:16px;}
+    h2{font-family:var(--display);font-size:22px;font-weight:700;margin:44px 0 14px;letter-spacing:-0.01em;}
+    h3{font-family:var(--display);font-size:16px;font-weight:600;margin:22px 0 8px;color:var(--text);}
+    p{color:var(--text2);margin:10px 0;}
+    code{font-family:var(--mono);font-size:0.88em;background:var(--s1);border:1px solid var(--border);border-radius:6px;padding:2px 6px;color:var(--accent);}
+    pre{background:var(--s0);border:1px solid var(--border);border-radius:12px;padding:18px 20px;overflow-x:auto;margin:14px 0;}
+    pre code{background:none;border:none;padding:0;color:var(--text);font-size:13px;line-height:1.7;}
+    .ep{background:var(--s1);border:1px solid var(--border);border-radius:14px;padding:22px 24px;margin:18px 0;}
+    .method{font-family:var(--mono);font-weight:700;font-size:13px;padding:3px 10px;border-radius:6px;margin-right:10px;}
+    .post{background:rgba(34,197,94,0.15);color:var(--ok);}
+    .get{background:rgba(34,211,238,0.15);color:var(--accent);}
+    .path{font-family:var(--mono);font-size:15px;color:var(--text);}
+    table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;}
+    th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+    th{color:var(--text3);font-weight:600;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:0.04em;}
+    td code{font-size:12px;}
+    .note{background:var(--accent-ghost);border:1px solid var(--border-accent);border-radius:10px;padding:14px 18px;margin:16px 0;color:var(--text2);font-size:14px;}
+    .note strong{color:var(--accent);}
+    .warn{background:rgba(255,214,0,0.06);border-color:rgba(255,214,0,0.25);}
+    .warn strong{color:var(--warn);}
+    .pill{font-family:var(--mono);font-size:12px;color:var(--text2);border:1px solid var(--border);border-radius:6px;padding:2px 8px;}
+    a{color:var(--accent);}
+    footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--border);color:var(--text3);font-size:13px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="badge">API REFERENCE</div>
+      <h1>ZeroPoint <span>Cookie Checker</span> API</h1>
+      <p class="sub">Validate Roblox cookies programmatically — alive / dead / face-lock / captcha-lock / ban-warn. Free to use, no credits.</p>
+    </header>
+
+    <h2>Overview</h2>
+    <p>The Cookie Checker API lets you submit a batch of Roblox cookies and poll for classification results, the same engine the website uses. It is <strong style="color:var(--ok)">completely free</strong> — there is no balance, no credits, and no payment of any kind.</p>
+    <ul style="color:var(--text2);margin:10px 0 0 22px;">
+      <li><strong style="color:var(--text)">Base URL:</strong> <code>https://zeropoint.to/api/cookie-checker-api</code></li>
+      <li><strong style="color:var(--text)">Auth:</strong> every request needs your key in the <code>X-API-Key</code> header.</li>
+      <li><strong style="color:var(--text)">Rate limit:</strong> <span class="pill">1 job every 20 seconds</span> per account (shared with the website — submitting on the site counts too).</li>
+    </ul>
+
+    <div class="note"><strong>Your API key</strong> is created and managed on the Cookie Checker page (the “API Access” card). It looks like <code>ZP_CookieChecker_…</code>. Keep it secret — anyone with it can submit jobs as you.</div>
+
+    <h2>Authentication</h2>
+    <p>Send your key on every request:</p>
+    <pre><code>X-API-Key: ZP_CookieChecker_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</code></pre>
+    <p>Missing/invalid key → <code>401</code>. A disabled key → <code>403</code>.</p>
+
+    <h2>Endpoints</h2>
+
+    <div class="ep">
+      <div><span class="method post">POST</span><span class="path">/api/cookie-checker-api/submit</span></div>
+      <p>Submit a batch of cookies for checking. Returns a <code>session_id</code> you poll for progress.</p>
+      <h3>Body (JSON)</h3>
+      <table>
+        <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+        <tr><td><code>cookies</code></td><td>string | string[]</td><td>Newline-separated text <em>or</em> an array of lines. Each line is kept only if it contains a ROBLOSECURITY cookie (the <code>_|WARNING…</code> token). Other lines are ignored. The original line is preserved in results.</td></tr>
+      </table>
+      <h3>Example</h3>
+      <pre><code>curl -X POST https://zeropoint.to/api/cookie-checker-api/submit \
+  -H "X-API-Key: ZP_CookieChecker_xxxxxxxx" \
+  -H "Content-Type: application/json" \
+  -d '{"cookies":"user:pass:_|WARNING:-DO-NOT-SHARE…\nuser2:pass:_|WARNING:-…"}'</code></pre>
+      <h3>Response</h3>
+      <pre><code>{ "session_id": "a1b2c3d4", "total": 2, "status": "checking" }</code></pre>
+      <p><code>400</code> if no valid cookies. <code>429</code> if you submitted within the last 20s (<code>{ "error":"…","cooldown": &lt;seconds&gt; }</code>).</p>
+    </div>
+
+    <div class="ep">
+      <div><span class="method get">GET</span><span class="path">/api/cookie-checker-api/status/:sessionId</span></div>
+      <p>Poll a job. Only the key that submitted the job can read it (else <code>404</code>). Poll every ~1–2s.</p>
+      <h3>Response</h3>
+      <pre><code>{
+  "status": "checking",            // pending | checking | completed | error
+  "total": 100,
+  "checked": 42,
+  "alive_count": 10, "dead_count": 28,
+  "face_lock_count": 2, "captcha_lock_count": 1, "ban_warn_count": 1,
+  "download_files": [
+    { "type":"alive", "count":10, "filename":"alive_a1b2c3d4.txt",
+      "url":"/api/cookie-checker/download/a1b2c3d4/alive" }
+  ]
+}</code></pre>
+      <p>When <code>status</code> is <code>pending</code>, a <code>queue_position</code> may be present. Download via the API path below once <code>completed</code>.</p>
+    </div>
+
+    <div class="ep">
+      <div><span class="method get">GET</span><span class="path">/api/cookie-checker-api/download/:sessionId/:type</span></div>
+      <p>Download a result file (plain text, one entry per line, original format preserved). Ownership-checked. Available once the job is <code>completed</code>.</p>
+      <h3>type</h3>
+      <p><code>alive</code> · <code>dead</code> · <code>face_lock</code> · <code>captcha_lock</code> · <code>ban_warn</code></p>
+      <h3>Example</h3>
+      <pre><code>curl -OJ https://zeropoint.to/api/cookie-checker-api/download/a1b2c3d4/alive \
+  -H "X-API-Key: ZP_CookieChecker_xxxxxxxx"</code></pre>
+    </div>
+
+    <h2>Result types</h2>
+    <table>
+      <tr><th>Type</th><th>Meaning</th></tr>
+      <tr><td><code>alive</code></td><td>Cookie is valid and the account is usable.</td></tr>
+      <tr><td><code>dead</code></td><td>Cookie is invalid / expired / logged out.</td></tr>
+      <tr><td><code>face_lock</code></td><td>Account is alive but behind a facial-verification lock.</td></tr>
+      <tr><td><code>captcha_lock</code></td><td>Account is alive but behind a captcha/account-unlock challenge.</td></tr>
+      <tr><td><code>ban_warn</code></td><td>Account is alive but has a moderation ban/warning.</td></tr>
+    </table>
+
+    <div class="note warn"><strong>Rate limit:</strong> one submit per 20 seconds per account. A <code>429</code> tells you how many seconds remain (<code>cooldown</code>). This is shared with the website, so don't submit on both at once.</div>
+
+    <h2>Errors</h2>
+    <table>
+      <tr><th>Code</th><th>Meaning</th></tr>
+      <tr><td><code>401</code></td><td>Missing or invalid API key.</td></tr>
+      <tr><td><code>403</code></td><td>API key disabled.</td></tr>
+      <tr><td><code>400</code></td><td>No valid cookies in the request, or invalid download type.</td></tr>
+      <tr><td><code>404</code></td><td>Session not found / not yours / expired.</td></tr>
+      <tr><td><code>429</code></td><td>Rate limited (1 job / 20s).</td></tr>
+      <tr><td><code>503</code></td><td>Cookie-checking service temporarily unavailable.</td></tr>
+    </table>
+
+    <footer>ZeroPoint Cookie Checker API · cookies must contain the <code>_|WARNING</code> ROBLOSECURITY token · free, no credits.</footer>
+  </div>
+</body>
+</html>
