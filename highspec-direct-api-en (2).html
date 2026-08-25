@@ -1,0 +1,601 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="light dark" />
+<title>HIGHSPEC.GG — Direct API</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  img, svg { display: block; max-width: 100%; }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--signal); outline-offset: 2px; border-radius: 3px; }
+  @media print {
+    body { background: #fff; color: #000; }
+    .ep, .note, .tw, pre, .base { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<style>
+  :root {
+    --canvas: #f7f7f8;
+    --panel: #ffffff;
+    --panel-2: #f0f1f3;
+    --ink: #16181c;
+    --ink-muted: #5c626c;
+    --hairline: rgba(20, 22, 26, 0.12);
+    --hairline-2: rgba(20, 22, 26, 0.07);
+    --signal: #d4600d;
+    --signal-soft: rgba(212, 96, 13, 0.1);
+    --ok: #147a4d;
+    --ok-soft: rgba(20, 122, 77, 0.1);
+    --info: #2c5fb8;
+    --info-soft: rgba(44, 95, 184, 0.1);
+    --warn: #8a6100;
+    --warn-soft: rgba(138, 97, 0, 0.1);
+    --bad: #b3261e;
+    --bad-soft: rgba(179, 38, 30, 0.1);
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans Thai",
+      "Leelawadee UI", Tahoma, sans-serif;
+    --mono: ui-monospace, "SFMono-Regular", "Cascadia Mono", Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --canvas: #131519;
+      --panel: #1a1d22;
+      --panel-2: #23272e;
+      --ink: #f1f2f4;
+      --ink-muted: #9aa1ab;
+      --hairline: rgba(255, 255, 255, 0.1);
+      --hairline-2: rgba(255, 255, 255, 0.055);
+      --signal: #fb8b28;
+      --signal-soft: rgba(251, 139, 40, 0.13);
+      --ok: #4cc48a;
+      --ok-soft: rgba(76, 196, 138, 0.13);
+      --info: #6fa5f7;
+      --info-soft: rgba(111, 165, 247, 0.13);
+      --warn: #e5b84b;
+      --warn-soft: rgba(229, 184, 75, 0.13);
+      --bad: #f1665c;
+      --bad-soft: rgba(241, 102, 92, 0.13);
+    }
+  }
+  :root[data-theme="dark"] {
+    --canvas: #131519;
+    --panel: #1a1d22;
+    --panel-2: #23272e;
+    --ink: #f1f2f4;
+    --ink-muted: #9aa1ab;
+    --hairline: rgba(255, 255, 255, 0.1);
+    --hairline-2: rgba(255, 255, 255, 0.055);
+    --signal: #fb8b28;
+    --signal-soft: rgba(251, 139, 40, 0.13);
+    --ok: #4cc48a;
+    --ok-soft: rgba(76, 196, 138, 0.13);
+    --info: #6fa5f7;
+    --info-soft: rgba(111, 165, 247, 0.13);
+    --warn: #e5b84b;
+    --warn-soft: rgba(229, 184, 75, 0.13);
+    --bad: #f1665c;
+    --bad-soft: rgba(241, 102, 92, 0.13);
+  }
+  :root[data-theme="light"] {
+    --canvas: #f7f7f8;
+    --panel: #ffffff;
+    --panel-2: #f0f1f3;
+    --ink: #16181c;
+    --ink-muted: #5c626c;
+    --hairline: rgba(20, 22, 26, 0.12);
+    --hairline-2: rgba(20, 22, 26, 0.07);
+    --signal: #d4600d;
+    --signal-soft: rgba(212, 96, 13, 0.1);
+    --ok: #147a4d;
+    --ok-soft: rgba(20, 122, 77, 0.1);
+    --info: #2c5fb8;
+    --info-soft: rgba(44, 95, 184, 0.1);
+    --warn: #8a6100;
+    --warn-soft: rgba(138, 97, 0, 0.1);
+    --bad: #b3261e;
+    --bad-soft: rgba(179, 38, 30, 0.1);
+  }
+
+  body {
+    margin: 0;
+    background: var(--canvas);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 3rem 1.25rem 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2.75rem;
+  }
+
+  /* ---- masthead ---- */
+  .mast { display: flex; flex-direction: column; gap: 0.85rem; }
+  .brand {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+  }
+  .brand b { color: var(--signal); font-weight: 600; }
+  h1 {
+    margin: 0;
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    font-weight: 650;
+    letter-spacing: -0.025em;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+  .lede { margin: 0; max-width: 62ch; color: var(--ink-muted); }
+  .base {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+    padding: 0.7rem 0.9rem;
+    background: var(--panel);
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+  }
+  .base span:first-child {
+    color: var(--ink-muted); font-size: 0.7rem;
+    letter-spacing: 0.1em; text-transform: uppercase;
+  }
+
+  /* ---- sections ---- */
+  section { display: flex; flex-direction: column; gap: 1rem; }
+  h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 620;
+    letter-spacing: -0.012em;
+    display: flex; align-items: baseline; gap: 0.6rem;
+  }
+  h2 .num {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--signal);
+    letter-spacing: 0.08em;
+  }
+  h3 { margin: 0 0 0.15rem; font-size: 0.95rem; font-weight: 600; }
+  p { margin: 0; max-width: 68ch; }
+  .muted { color: var(--ink-muted); }
+  .small { font-size: 0.86rem; }
+
+  /* ---- endpoint card ---- */
+  .ep {
+    background: var(--panel);
+    border: 1px solid var(--hairline);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .ep-head {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--hairline-2);
+    background: var(--panel-2);
+  }
+  .verb {
+    font-family: var(--mono); font-size: 0.68rem; font-weight: 700;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.45rem; border-radius: 4px;
+  }
+  .verb.post { color: var(--ok); background: var(--ok-soft); }
+  .verb.get { color: var(--info); background: var(--info-soft); }
+  .path {
+    font-family: var(--mono); font-size: 0.85rem;
+    overflow-wrap: anywhere;
+  }
+  .path em { font-style: normal; color: var(--signal); }
+  .ep-body { padding: 1rem; display: flex; flex-direction: column; gap: 0.9rem; }
+
+  pre {
+    margin: 0;
+    padding: 0.85rem 1rem;
+    background: var(--canvas);
+    border: 1px solid var(--hairline-2);
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    line-height: 1.6;
+  }
+  code { font-family: var(--mono); font-size: 0.88em; }
+  p code, li code, td code {
+    background: var(--panel-2);
+    border: 1px solid var(--hairline-2);
+    border-radius: 4px;
+    padding: 0.05em 0.32em;
+  }
+  .label {
+    font-family: var(--mono); font-size: 0.66rem;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 0.35rem;
+  }
+  .cols { display: grid; gap: 0.9rem; }
+  @media (min-width: 52rem) { .cols.two { grid-template-columns: 1fr 1fr; } }
+
+  /* ---- tables ---- */
+  .tw { overflow-x: auto; border: 1px solid var(--hairline); border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.88rem; }
+  th, td {
+    text-align: left; padding: 0.55rem 0.8rem;
+    border-bottom: 1px solid var(--hairline-2);
+    vertical-align: top;
+  }
+  th {
+    font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-muted); font-weight: 600; background: var(--panel-2);
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td:first-child { font-family: var(--mono); white-space: nowrap; }
+  .req { color: var(--signal); font-size: 0.72rem; font-family: var(--mono); }
+  .opt { color: var(--ink-muted); font-size: 0.72rem; font-family: var(--mono); }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ---- callout ---- */
+  .note {
+    display: flex; gap: 0.7rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--hairline);
+    border-radius: 8px;
+    background: var(--panel);
+    font-size: 0.9rem;
+  }
+  .note .tag {
+    font-family: var(--mono); font-size: 0.64rem; font-weight: 700;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.18rem 0.4rem; border-radius: 4px; height: fit-content;
+    white-space: nowrap;
+  }
+  .note.warn .tag { color: var(--warn); background: var(--warn-soft); }
+  .note.info .tag { color: var(--info); background: var(--info-soft); }
+  .note.bad .tag { color: var(--bad); background: var(--bad-soft); }
+  .note p { max-width: none; }
+
+  ul { margin: 0; padding-left: 1.1rem; display: flex; flex-direction: column; gap: 0.3rem; }
+  hr { border: none; border-top: 1px solid var(--hairline); margin: 0; }
+  footer { color: var(--ink-muted); font-size: 0.82rem; }
+</style>
+
+<div class="wrap">
+
+  <header class="mast">
+    <div class="brand">HIGHSPEC<b>.GG</b> — DIRECT API</div>
+    <h1>Submit jobs with your own API</h1>
+    <p class="lede">
+      Fire captcha and face-scan jobs straight into the queue from your own program, authenticated by your personal API key —
+      no login. It charges your in-app balance exactly like the web.
+    </p>
+    <div class="base">
+      <span>BASE URL</span>
+      <span>https://api.highspec.gg/api/v1</span>
+    </div>
+  </header>
+
+  <hr />
+
+  <section>
+    <h2><span class="num">01</span> Authentication</h2>
+    <p>Every request must include your API key (starts with <code>hsk_</code>). Use any method — the system reads them in this order:</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Method</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Query string</td><td><code>?api_key=hsk_xxxxx</code></td></tr>
+          <tr><td>Header</td><td><code>X-API-Key: hsk_xxxxx</code></td></tr>
+          <tr><td>Bearer</td><td><code>Authorization: Bearer hsk_xxxxx</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note bad">
+      <span class="tag">Keep it secret</span>
+      <p>Anyone with this key can submit jobs and spend your balance. If it leaks, generate a new one on the <b>API Keys</b> page — the old key stops working immediately.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">02</span> Submit a captcha job</h2>
+
+    <div class="ep">
+      <div class="ep-head">
+        <span class="verb post">POST</span>
+        <span class="path">/external/job/captcha/submit?service=<em>directapi</em></span>
+      </div>
+      <div class="ep-body">
+        <div class="cols two">
+          <div>
+            <div class="label">Request</div>
+            <pre>{
+  "note": "Horst Rejoin",
+  "accounts": [
+    {
+      "username": "highspecgg",
+      "cookie": "_|WARNING:-DO-NOT-SHARE-THIS.|XXXX"
+    },
+    {
+      "username": "highspecgg2",
+      "cookie": "_|WARNING:-DO-NOT-SHARE-THIS.|XXXX"
+    }
+  ]
+}</pre>
+          </div>
+          <div>
+            <div class="label">Response · 201</div>
+            <pre>{
+  "status": 201,
+  "message": "job submitted",
+  "data": {
+    "id": "3bfc793b-7c28-4e9a-86c8-…",
+    "status": "PENDING",
+    "total_accounts": 2,
+    "total_amount": 4,
+    "note": "[DirectAPI] Horst Rejoin",
+    "priority": false,
+    "is_api": true,
+    "api_by": "directapi",
+    "queue_position": 0,
+    "created_at": "2026-07-27T11:21:25Z"
+  }
+}</pre>
+          </div>
+        </div>
+
+        <div class="note info">
+          <span class="tag">Keep the id</span>
+          <p>
+            <code>data.id</code> is the job id, returned immediately — keep it to check status in section 05.
+            <code>total_amount</code> is what was charged, in satang (<span class="num">4</span> = <span class="num">0.04</span> THB).
+          </p>
+        </div>
+
+        <div class="tw">
+          <table>
+            <thead><tr><th>Field</th><th></th><th>Details</th></tr></thead>
+            <tbody>
+              <tr>
+                <td>accounts</td><td><span class="req">Required</span></td>
+                <td>List of accounts; multiple per job, at least one.</td>
+              </tr>
+              <tr>
+                <td>accounts[].username</td><td><span class="req">Required</span></td>
+                <td>Roblox username</td>
+              </tr>
+              <tr>
+                <td>accounts[].cookie</td><td><span class="req">Required</span></td>
+                <td>The <code>.ROBLOSECURITY</code> cookie — <b>no password needed</b>, we don't store it.</td>
+              </tr>
+              <tr>
+                <td>note</td><td><span class="opt">Optional</span></td>
+                <td>A label for the job — which bot/run it came from; shown in your job history.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="note info">
+      <span class="tag">Dedup</span>
+      <p>
+        Accounts still pending in an earlier job (<code>PENDING</code> / <code>PROCESSING</code>) are skipped automatically
+        and not double-charged — safe to retry. If every account in the request is already in flight, you get a <code>409</code> and no new job is created.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">03</span> Submit a face-scan job</h2>
+    <div class="ep">
+      <div class="ep-head">
+        <span class="verb post">POST</span>
+        <span class="path">/external/job/face-scan/submit?service=<em>directapi</em></span>
+      </div>
+      <div class="ep-body">
+        <p class="small muted">
+          Exactly like the captcha job — same payload; <code>note</code>, x2, and dedup all work the same.
+          It just goes to the face-scan tool instead.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">04</span> Turn x2 on / off</h2>
+    <p>
+      Add <code>&amp;priority=true</code> to the URL to enable <b>x2 (priority)</b> —
+      the job is picked up before the normal queue, for <b>double the charge</b>.
+      Leave it off (or <code>false</code>) for the normal queue at the normal price.
+      
+    </p>
+    <div class="cols two">
+      <div>
+        <div class="label">x2 off — normal queue</div>
+        <pre>POST /external/job/captcha/submit
+     ?service=directapi
+     &amp;api_key=hsk_xxxxx</pre>
+      </div>
+      <div>
+        <div class="label">x2 on — priority</div>
+        <pre>POST /external/job/captcha/submit
+     ?service=directapi
+     &amp;api_key=hsk_xxxxx
+     &amp;priority=true</pre>
+      </div>
+    </div>
+    <div class="note warn">
+      <span class="tag">Billing</span>
+      <p>
+        You are charged at submit, by the number of accounts actually queued (after dedup).
+        Accounts that fail are auto-refunded — see <code>refunded_amount</code>.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">05</span> Check job status</h2>
+    <p>Append the <code>id</code> from submit (section 02) to the URL.</p>
+    <div class="ep">
+      <div class="ep-head">
+        <span class="verb get">GET</span>
+        <span class="path">/external/job/<em>:id</em></span>
+      </div>
+      <div class="ep-body">
+        <div class="cols two">
+          <div>
+            <div class="label">Response · 200</div>
+            <pre>{
+  "data": {
+    "id": "c8479853-1284-4a99-8267-…",
+    "status": "COMPLETED",
+    "total_amount": 100,
+    "success_amount": 92,
+    "fail_amount": 5,
+    "skip_amount": 3,
+    "refunded_amount": 16,
+    "note": "[DirectAPI] Horst Rejoin",
+    "priority": false
+  }
+}</pre>
+          </div>
+          <div>
+            <div class="label">status — exactly 4 values</div>
+            <div class="tw">
+              <table>
+                <tbody>
+                  <tr><td>PENDING</td><td>queued</td></tr>
+                  <tr><td>PROCESSING</td><td>running</td></tr>
+                  <tr><td>COMPLETED</td><td>finished <span class="muted">(terminal)</span></td></tr>
+                  <tr><td>FAILED</td><td>whole job failed, refunded <span class="muted">(terminal)</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="small muted">
+              Poll until status = <code>COMPLETED</code> or <code>FAILED</code> (both terminal — they don't change again).
+            </p>
+          </div>
+        </div>
+        <div class="note bad">
+          <span class="tag">Read carefully</span>
+          <p>
+            <code>COMPLETED</code> means the job <em>finished</em> — <strong>not that every account succeeded</strong>.
+            A job where all accounts fail is still <code>COMPLETED</code>.
+            Always check <code>success_amount</code> / <code>fail_amount</code> for the real result, never just <code>status</code>.
+            
+          </p>
+        </div>
+        <p class="small muted">
+          You can only read your own key's jobs; another user's job returns <code>404</code> as if it doesn't exist.
+        </p>
+      </div>
+    </div>
+
+    <p style="margin-top:22px">
+      Want to know <b>which IDs succeeded and which failed</b> (per ID, not just totals)? Append <code>/accounts</code> to the URL.
+    </p>
+    <div class="ep">
+      <div class="ep-head">
+        <span class="verb get">GET</span>
+        <span class="path">/external/job/<em>:id</em>/accounts</span>
+      </div>
+      <div class="ep-body">
+        <div class="cols two">
+          <div>
+            <div class="label">Response · 200</div>
+            <pre>{
+  "data": {
+    "accounts": [
+      { "combo": "user1:pass:cookie", "status": "COMPLETED" },
+      { "combo": "user2:pass:cookie", "status": "FAILED" }
+    ]
+  }
+}</pre>
+          </div>
+          <div>
+            <div class="label">Filter (optional)</div>
+            <pre>?status=success   → only succeeded
+?status=fail      → only failed
+?status=skip      → only skipped</pre>
+            <p class="small muted">
+              Per-line <code>status</code>: <code>COMPLETED</code> / <code>FAILED</code> /
+              <code>SKIP</code> / <code>FACE_LOCK</code> / <code>COOKIE_BROKEN</code>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">06</span> Check balance</h2>
+    <div class="ep">
+      <div class="ep-head">
+        <span class="verb get">GET</span>
+        <span class="path">/external/balance</span>
+      </div>
+      <div class="ep-body">
+        <div class="cols two">
+          <div>
+            <div class="label">Request</div>
+            <pre>curl -H "X-API-Key: hsk_xxxxx" \
+  https://api.highspec.gg/api/v1/external/balance</pre>
+          </div>
+          <div>
+            <div class="label">Response · 200</div>
+            <pre>{ "data": { "points": 179890 } }</pre>
+          </div>
+        </div>
+        <div class="note info">
+          <span class="tag">Unit</span>
+          <p>
+            <code>points</code> are in satang — <b>divide by 100 for THB</b>.
+            e.g. <span class="num">179890</span> = <span class="num">1,798.90</span> THB.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2><span class="num">07</span> Limits &amp; error codes</h2>
+    <p>
+      Limit <b class="num">150</b> requests/second (burst <b class="num">300</b>) <b>per key</b>, not per IP.
+      Hammering from one machine is fine and won't get the IP blocked.
+    </p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Code</th><th>Meaning</th><th>What to do</th></tr></thead>
+        <tbody>
+          <tr><td>400</td><td>Bad payload or insufficient balance</td><td>Check <code>username</code>/<code>cookie</code> and your balance</td></tr>
+          <tr><td>401</td><td>Missing or invalid key</td><td>Check the key on the API Keys page</td></tr>
+          <tr><td>409</td><td>All accounts already in an earlier job</td><td>Wait for the earlier job to finish, then resubmit</td></tr>
+          <tr><td>429</td><td>Too many requests</td><td>Wait per <code>Retry-After</code> (1 second) and retry</td></tr>
+          <tr><td>503</td><td>Tool temporarily disabled</td><td>Try again later</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr />
+
+  <footer>
+    Need a key or a custom limit? Contact an admin on Discord — HIGHSPEC.GG
+  </footer>
+
+</div>
+
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"075251152d724c0caf5a315fa41f34e9","r":1}' crossorigin="anonymous"></script>
+</body>
+</html>
