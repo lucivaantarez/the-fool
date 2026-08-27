@@ -1,7 +1,10 @@
 node_modules/
-tools/zekehub-session/
-zekehub-captures/
+node_modules/
+.local/
+artifacts/
+archive/
 graphify-out/
 knowledge-base/
 assets/xlsx.full.min.js
 assets/adoptme-react.js
+saturnity-vault-*.json

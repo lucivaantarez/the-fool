@@ -2,8 +2,8 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const sessionDir = resolve(process.cwd(), 'zekehub-session');
-const outputDir = resolve(process.cwd(), 'zekehub-captures', 'ui-audit');
+const sessionDir = resolve(process.cwd(), '.local', 'zekehub', 'session');
+const outputDir = resolve(process.cwd(), 'artifacts', 'zekehub', 'captures', 'ui-audit');
 const sections = ['Overview','Accounts','Sessions','Inventory','Config','Templates','Joiner','Exporter','Account Manager','Item Database','Settings'];
 const safeMenus = {
   Accounts: ['Actions','Filters','Name','Select','Columns','Group','Ranges','50'],

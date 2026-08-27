@@ -4,18 +4,17 @@ This vault is the durable knowledge base for The Fool. It combines human-maintai
 
 ## Start here
 
-- [[Architecture]] — system boundaries, major components, and data flow
-- [[Decisions]] — durable technical decisions and their rationale
-- [[Development Log]] — concise history of meaningful changes
-- [[Graphify Guide]] — graph status, generated artifacts, and Codex queries
-- [[graph.canvas]] — visual map generated from the current code graph
+- [[project/Architecture|Architecture]] — system boundaries, major components, and data flow
+- [[project/Decisions|Decisions]] — durable technical decisions and their rationale
+- [[project/Development Log|Development Log]] — concise history of meaningful changes
+- [[project/Graphify Guide|Graphify Guide]] — graph status, generated artifacts, and Codex queries
+- [[graphify/graph.canvas|Graph canvas]] — visual map generated from the current code graph
 
 ## Source documents
 
-- `../SATURNITY_CONTEXT.md` — product and migration context
-- `../handout.md` — feature and implementation handout
-- `../HOSTING.md` — deployment workflow; verify against the current backend before relying on older statements
+- `../docs/product/SATURNITY_CONTEXT.md` — product and migration context
+- `../docs/product/handout.md` — feature and implementation handout
+- `../docs/operations/HOSTING.md` — current publishing and reverse-proxy workflow
 - `../backend/README.md` — private backend setup and security boundary
 
-Generated node and community notes in this folder are managed by Graphify. Edit the human-maintained notes above for architecture, decisions, and development history.
-
+Generated node and community notes under `graphify/` are managed by Graphify. Edit `Home.md` and notes under `project/` for architecture, decisions, and development history.

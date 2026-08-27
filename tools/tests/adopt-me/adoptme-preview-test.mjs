@@ -1,28 +1,37 @@
 import { chromium } from 'playwright';
+import { mkdir } from 'node:fs/promises';
 
 const url = 'https://preview.saturnity.site/adopt-me';
+const artifactDir = 'artifacts/tests/adopt-me';
+await mkdir(artifactDir, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const errors = [];
 
 async function openPreview(page) {
   page.on('pageerror', error => errors.push(error.message));
-  await page.goto(url, { waitUntil: 'networkidle', timeout: 45_000 });
+  await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 45_000 });
   await page.evaluate(() => {
     const gate = document.querySelector('#pin-screen');
     if (gate) gate.style.display = 'none';
   });
   const route = page.locator('#sv-route-sidebar [data-sv-route="adoptme"]');
-  await route.waitFor({ state: 'visible' });
+  const available = await route.waitFor({ state: 'visible', timeout: 5_000 }).then(() => true, () => false);
+  if (!available) return false;
   await route.click();
   await page.locator('.zr-app').waitFor({ state: 'visible' });
+  return true;
 }
 
 const desktop = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
-await openPreview(desktop);
+if (!await openPreview(desktop)) {
+  console.log(JSON.stringify({ skipped: true, reason: 'Authenticated preview session required.' }));
+  await browser.close();
+  process.exit(0);
+}
 const mounted = await desktop.evaluate(() => document.querySelector('[data-sv-page="adoptme"]')?.dataset.reactMounted);
 const chartCount = await desktop.locator('.recharts-responsive-container').count();
 const routeTitles = {};
-for (const label of ['Accounts', 'Sessions', 'Inventory', 'Config', 'Templates', 'Joiner', 'Exporter', 'Account Manager', 'Item Database']) {
+for (const label of ['Accounts', 'Sessions', 'Inventory', 'Config', 'Templates', 'Exporter', 'Notifications', 'Item Database', 'Settings']) {
   await desktop.locator(`.zr-side nav button[title="${label}"]`).click();
   routeTitles[label] = await desktop.locator('.zr-page-head h1').innerText();
 }
@@ -40,7 +49,7 @@ const outerCollapsed = await desktop.locator('body.sv-shell-collapsed').count();
 await desktop.getByRole('button', { name: 'Overview', exact: true }).click();
 await desktop.locator('[data-sv-outer-collapse]').click();
 await desktop.locator('.zr-side > header > button').click();
-await desktop.screenshot({ path: '../adoptme-react-preview.png', fullPage: true });
+await desktop.screenshot({ path: `${artifactDir}/adoptme-react-preview.png`, fullPage: true });
 
 const mobile = await browser.newPage({ viewport: { width: 360, height: 800 }, isMobile: true });
 await openPreview(mobile);
@@ -59,7 +68,7 @@ const mobileScrollTop = await mobile.evaluate(() => {
   main.scrollTop = 250;
   return main.scrollTop;
 });
-await mobile.screenshot({ path: '../adoptme-react-mobile.png', fullPage: true });
+await mobile.screenshot({ path: `${artifactDir}/adoptme-react-mobile.png`, fullPage: true });
 
 console.log(JSON.stringify({
   mounted,

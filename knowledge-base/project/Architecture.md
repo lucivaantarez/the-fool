@@ -11,23 +11,28 @@ The Fool is a browser application with a private Node.js backend and separately 
 | Adopt Me bundle | `assets/adoptme-react.js` | Generated browser bundle; excluded from Graphify in favor of its JSX source |
 | Backend | `backend/server.mjs` | Authentication, sessions, encrypted vault persistence, scripts, API configuration, and object-storage signing |
 | Publishing | `publish-saturnity.ps1` | Copies approved static assets into isolated preview or production web roots |
-| Verification | `tools/*.mjs` | Playwright captures, UI audits, and XLS/XLSX support checks |
+| Verification | `tools/tests/` | Playwright UI checks and XLS/XLSX compatibility checks |
+| Research | `tools/research/zekehub/` | Authenticated, redacted UI capture and audit tooling |
+| Local artifacts | `artifacts/` and `.local/` | Ignored generated output and sensitive browser-session state |
 | Knowledge graph | `graphify-out/` | Generated code relationships, report, and interactive HTML graph |
-| Knowledge base | `knowledge-base/` | Obsidian notes, architecture decisions, development log, and exported graph notes |
+| Knowledge base | `knowledge-base/project/` | Human Obsidian notes; generated graph notes are isolated under `knowledge-base/graphify/` |
 
 ## Data and security boundaries
 
 - Browser vault state is synchronized through the private backend rather than published as a static asset.
 - The backend listens on loopback and is expected to be reverse-proxied by Caddy.
 - Vault payloads are encrypted before SQLite storage; server secrets and the database remain outside the repository and web roots.
-- Production and preview folders receive only explicitly approved static files.
+- `publish-saturnity.ps1` copies the two HTML entrypoints and production assets into isolated preview or production web roots.
 - Generated dependencies, browser-session captures, and minified bundles are excluded from Graphify.
+- Caddy serves those published roots and reverse-proxies `/api/*` to the loopback backend.
 
-## Current documentation risk
+## Repository boundary
 
-`HOSTING.md` still describes an earlier static-only stage in one section, while `backend/README.md` documents the implemented private backend. Treat the backend README and current code as authoritative until the hosting document is reconciled.
+- Root entrypoints and live asset paths remain stable because the deployment script depends on them.
+- Product and preservation specifications live under `docs/product/`; operational guidance lives under `docs/operations/`.
+- Tests, research scripts, runtime output, and archived prototypes cannot be copied by the production publisher accidentally.
+- The tracked historical vault export is a protected exception. Repository restructuring does not change or sanitize its Git history.
 
 ## Graph snapshot
 
-The initial credential-free graph contains 167 project-owned nodes, 215 edges, and 17 communities. Its central node is the backend `server`; the strongest cross-community bridge found is the object-storage signing path through `s3SignedRequest()`.
-
+After restructuring, the credential-free graph contains 260 nodes, 301 edges, and 24 communities. Its most connected implementation node remains the backend `server`, and Graphify reports no import cycles.

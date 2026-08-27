@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:adoptme": "esbuild frontend/adoptme-preview.jsx --bundle --minify --format=iife --target=es2020 --outfile=assets/adoptme-react.js",
-    "zekehub:login": "node tools/zekehub-capture.mjs --login",
-    "zekehub:capture": "node tools/zekehub-capture.mjs --capture"
+    "zekehub:login": "node tools/research/zekehub/zekehub-capture.mjs --login",
+    "zekehub:capture": "node tools/research/zekehub/zekehub-capture.mjs --capture"
   },
   "repository": {
     "type": "git",

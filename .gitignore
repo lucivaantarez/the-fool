@@ -1,2 +1,23 @@
+node_modules/
+.local/
+artifacts/
+
+# Local secrets and backend data never belong in this repository.
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-*
+saturnity-vault-*.json
+
+# Local UI state and generated knowledge exports.
+knowledge-base/.obsidian/workspace.json
+knowledge-base/graphify/
+graphify-out/*
+!graphify-out/GRAPH_REPORT.md
+!graphify-out/graph.html
+!graphify-out/graph.json
+
+# Legacy locations retained so old tooling cannot accidentally commit them.
 zekehub-session/
 zekehub-captures/

@@ -2,8 +2,8 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const sessionDir = resolve(process.cwd(), 'zekehub-session');
-const outputDir = resolve(process.cwd(), 'zekehub-captures', 'audit');
+const sessionDir = resolve(process.cwd(), '.local', 'zekehub', 'session');
+const outputDir = resolve(process.cwd(), 'artifacts', 'zekehub', 'captures', 'audit');
 const startPaths = ['/dashboard/documentation', '/dashboard/adoptme'];
 const redact = value => String(value || '')
   .replace(/\b(?:api|auth|access|secret|session|cookie)\s*(?:key|token|id)?\s*[:=]\s*\S+/gi, '[redacted credential]')

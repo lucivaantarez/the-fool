@@ -2,7 +2,7 @@ import { createRequire } from 'node:module';
 import { chromium } from 'playwright';
 
 const require = createRequire(import.meta.url);
-const XLSX = require('../assets/xlsx.full.min.js');
+const XLSX = require('../../../assets/xlsx.full.min.js');
 const workbook = XLSX.utils.book_new();
 XLSX.utils.book_append_sheet(workbook, XLSX.utils.aoa_to_sheet([
   ['username'],

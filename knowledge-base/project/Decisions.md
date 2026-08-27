@@ -16,3 +16,9 @@
 - Exclude dependencies, captured browser sessions, generated knowledge output, the Obsidian export, and minified vendor/bundle files through `.graphifyignore`.
 - Index authored sources such as `frontend/adoptme-preview.jsx`, `backend/server.mjs`, PowerShell workflows, and test/audit tools.
 
+## 2026-08-28 — Conservative repository restructuring
+
+- Keep `index.html`, `adopt-me.html`, live assets, frontend source, backend source, and the root publisher at their established paths.
+- Separate product documentation, tests, research automation, generated artifacts, sensitive local state, and archived prototypes by responsibility.
+- Preserve file contents during moves and limit source edits to path compatibility.
+- Keep the existing tracked vault export untouched; address its Git-history exposure only as a separate security operation with explicit approval.

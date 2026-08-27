@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 
-$repoRoot = Split-Path -Parent $PSScriptRoot
+$repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $graphify = Join-Path $env:USERPROFILE ".local\bin\graphify.exe"
 
 if (-not (Test-Path -LiteralPath $graphify)) {
@@ -16,7 +16,7 @@ try {
     & $graphify cluster-only . --no-label
     if ($LASTEXITCODE -ne 0) { throw "Graphify clustering failed with exit code $LASTEXITCODE." }
 
-    & $graphify export obsidian --dir knowledge-base
+    & $graphify export obsidian --dir knowledge-base/graphify
     if ($LASTEXITCODE -ne 0) { throw "Graphify Obsidian export failed with exit code $LASTEXITCODE." }
 
     Write-Host "Project graph and Obsidian vault refreshed."
@@ -24,4 +24,3 @@ try {
 finally {
     Pop-Location
 }
-

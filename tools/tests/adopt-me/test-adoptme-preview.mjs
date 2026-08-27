@@ -1,5 +1,8 @@
 import { chromium } from '@playwright/test';
+import { mkdir } from 'node:fs/promises';
 
+const artifactDir = 'artifacts/tests/adopt-me';
+await mkdir(artifactDir, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage({ viewport: { width: 1440, height: 960 } });
 const errors = [];
@@ -18,20 +21,20 @@ await page.getByRole('button', { name: 'Inventory', exact: true }).click();
 await page.locator('.zr-inventory-grid>button').first().click();
 await page.locator('.zr-item-modal').waitFor();
 await page.waitForTimeout(250);
-await page.screenshot({ path: '../adoptme-item-inspector.png', fullPage: true });
+await page.screenshot({ path: `${artifactDir}/adoptme-item-inspector.png`, fullPage: true });
 await page.getByRole('button', { name: 'Close', exact: true }).last().click();
 await page.getByRole('button', { name: 'Templates', exact: true }).click();
 await page.getByRole('button', { name: 'Create Template', exact: true }).click();
 await page.locator('.zr-template-builder').waitFor();
 await page.waitForTimeout(250);
-await page.screenshot({ path: '../adoptme-template-builder.png', fullPage: true });
+await page.screenshot({ path: `${artifactDir}/adoptme-template-builder.png`, fullPage: true });
 await page.getByRole('button', { name: 'Cancel', exact: true }).click();
 await page.getByRole('button', { name: 'Exporter', exact: true }).click();
 await page.locator('.zr-export-layout').waitFor();
 if (await page.locator('.zr-column-groups section').count() !== 6) throw new Error('Exporter column groups are incomplete');
-await page.screenshot({ path: '../adoptme-exporter-dense.png', fullPage: true });
+await page.screenshot({ path: `${artifactDir}/adoptme-exporter-dense.png`, fullPage: true });
 await page.getByRole('button', { name: 'Overview', exact: true }).click();
-await page.screenshot({ path: '../adoptme-standalone-desktop.png', fullPage: true });
+await page.screenshot({ path: `${artifactDir}/adoptme-standalone-desktop.png`, fullPage: true });
 
 const mobile = await browser.newPage({ viewport: { width: 360, height: 800 }, deviceScaleFactor: 1 });
 mobile.on('pageerror', error => errors.push(error.message));
@@ -45,7 +48,7 @@ await mobile.locator('.zr-item-modal').waitFor();
 const itemOverflow = await mobile.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
 if (itemOverflow > 2) throw new Error(`Mobile item inspector overflows horizontally by ${itemOverflow}px`);
 await mobile.getByRole('button', { name: 'Close', exact: true }).last().click();
-await mobile.screenshot({ path: '../adoptme-standalone-mobile.png', fullPage: true });
+await mobile.screenshot({ path: `${artifactDir}/adoptme-standalone-mobile.png`, fullPage: true });
 
 const signedOut = await browser.newPage({ viewport: { width: 1000, height: 760 } });
 await signedOut.goto('https://preview.saturnity.site/adopt-me/', { waitUntil: 'domcontentloaded' });

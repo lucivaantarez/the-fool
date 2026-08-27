@@ -2,8 +2,8 @@ import { chromium } from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-const output = resolve(process.cwd(), 'zekehub-captures', 'detail-audit');
-const context = await chromium.launchPersistentContext(resolve(process.cwd(), 'zekehub-session'), {
+const output = resolve(process.cwd(), 'artifacts', 'zekehub', 'captures', 'detail-audit');
+const context = await chromium.launchPersistentContext(resolve(process.cwd(), '.local', 'zekehub', 'session'), {
   headless: true,
   viewport: { width: 1440, height: 1000 },
 });

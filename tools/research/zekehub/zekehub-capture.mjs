@@ -3,8 +3,8 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
 const dashboardUrl = 'https://zekehub.com/dashboard/adoptme';
-const sessionDir = resolve(process.cwd(), 'zekehub-session');
-const captureDir = resolve(process.cwd(), 'zekehub-captures');
+const sessionDir = resolve(process.cwd(), '.local', 'zekehub', 'session');
+const captureDir = resolve(process.cwd(), 'artifacts', 'zekehub', 'captures');
 const captureMode = process.argv.includes('--capture');
 const loginMode = process.argv.includes('--login');
 

@@ -18,6 +18,33 @@ If a command fails with a quota error, inform the user and suggest `npx ctx7@lat
 Run Context7 CLI requests outside Codex's default sandbox. If a Context7 CLI command fails with DNS or network errors such as ENOTFOUND, host resolution failures, or fetch failed, rerun it outside the sandbox instead of retrying inside the sandbox.
 <!-- context7 -->
 
+## Repository architecture
+
+- `index.html` is the stable main application entrypoint. It contains the private dashboard, Saturnity Vault, shared hub, and browser utilities.
+- `adopt-me.html` is the stable standalone Adopt Me entrypoint.
+- `frontend/adoptme-preview.jsx` is the authored Adopt Me React source; `assets/adoptme-react.js` is its generated browser bundle.
+- `backend/server.mjs` is the private Node.js service for authentication, encrypted vault synchronization, scripts, integrations, and object-storage signing.
+- `assets/` contains only files that may be published with the application.
+- `docs/product/` contains product and preservation specifications. `docs/operations/` contains deployment documentation.
+- `tools/tests/`, `tools/research/`, and `tools/knowledge/` contain verification, research automation, and knowledge maintenance respectively.
+- `archive/` contains preserved non-production prototypes. `artifacts/` contains ignored generated output. `.local/` contains ignored sensitive machine-local state.
+- `knowledge-base/` is the Obsidian vault. Human notes are in `knowledge-base/project/`; Graphify exports are in `knowledge-base/graphify/`.
+
+## Protected data and compatibility rules
+
+- Preserve `vault[]` as the single source of truth and preserve the `{ version, exported, vault }` export contract.
+- Do not change vault migration behavior, JSON schemas, cookie/group field names, or unknown-field preservation without explicit approval and migration proof.
+- Never read into logs, publish, commit, or rewrite `.env` files, SQLite databases, vault exports, browser sessions, credentials, or external `saturnity-data/` contents.
+- Keep `index.html`, `adopt-me.html`, `assets/`, and `publish-saturnity.ps1` compatible with the current Caddy publishing workflow.
+- `assets/adoptme-react.js` and `assets/xlsx.full.min.js` are generated/vendor files; edit their authored source or dependency workflow instead of hand-editing them.
+
+## Coding and terminal workflow
+
+- Use RTK-prefixed terminal commands as configured by `C:\Users\Administrator\.codex\RTK.md`.
+- Prefer narrow changes, reuse existing patterns, and avoid application rewrites during maintenance work.
+- Before moving or renaming a file, find its package-script, runtime, documentation, and deployment references. Update those references in the same change.
+- Verify backend syntax, frontend buildability, static asset references, and deployment inputs after structural changes.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
@@ -34,7 +61,7 @@ Rules:
 ## Project knowledge workflow
 
 - Treat `knowledge-base/` as the project's durable Obsidian knowledge base.
-- When a change alters components, boundaries, storage, authentication, deployment, or data flow, update `knowledge-base/Architecture.md` in the same task.
-- Record durable technical choices and rationale in `knowledge-base/Decisions.md`; record meaningful completed work in `knowledge-base/Development Log.md`.
-- After code changes, run `tools/update-project-knowledge.ps1` to refresh Graphify clustering and the Obsidian export.
-- Do not hand-edit Graphify-generated node/community notes. Human-maintained notes are `Home.md`, `Architecture.md`, `Decisions.md`, `Development Log.md`, and `Graphify Guide.md`.
+- When a change alters components, boundaries, storage, authentication, deployment, or data flow, update `knowledge-base/project/Architecture.md` in the same task.
+- Record durable technical choices and rationale in `knowledge-base/project/Decisions.md`; record meaningful completed work in `knowledge-base/project/Development Log.md`.
+- After code or path changes, run `tools/knowledge/update-project-knowledge.ps1` to refresh Graphify clustering and the Obsidian export.
+- Do not hand-edit files under `knowledge-base/graphify/`. Human-maintained notes are `Home.md` and the files under `knowledge-base/project/`.

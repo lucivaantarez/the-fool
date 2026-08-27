@@ -5,8 +5,8 @@
 - `../graphify-out/graph.json` — queryable graph data
 - `../graphify-out/GRAPH_REPORT.md` — architecture audit and suggested questions
 - `../graphify-out/graph.html` — interactive browser visualization
-- `graph.canvas` — Obsidian canvas
-- Generated `*.md` node/community notes in this vault
+- `../graphify/graph.canvas` — Obsidian canvas
+- Generated `*.md` node/community notes under `../graphify/`
 
 ## Query from Codex
 
@@ -26,8 +26,7 @@ graphify god-nodes --top 10
 After code changes, run:
 
 ```powershell
-.\tools\update-project-knowledge.ps1
+.\tools\knowledge\update-project-knowledge.ps1
 ```
 
-Git post-commit and post-checkout hooks also refresh the code graph. The project script additionally regenerates clustering and exports the current graph into this Obsidian vault.
-
+Git post-commit and post-checkout hooks also refresh the code graph. The project script additionally regenerates clustering and exports the current graph into `knowledge-base/graphify/`.
