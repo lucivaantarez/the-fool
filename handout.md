@@ -536,3 +536,40 @@ CSS: single `<style>` block, CSS custom properties in `:root`, dark theme only (
 ---
 
 *End of handoff. This document is self-contained; an AI can act on the vault from this alone.*
+
+---
+
+## 16. v2.9 PRESERVATION HARDENING
+
+The supplied `saturnity-vault-*.json` already has the contractual export wrapper
+and needs no manual JSON conversion. Its additional cookie fields (including
+`id`, `tags`, `timeline`, `_lastGroup`, and `lastSynced`) are real persisted
+data and must survive imports, edits, exports, and sync.
+
+- Legacy duplicate cookie IDs are tolerated and reported in **Data check**;
+  existing IDs are never regenerated automatically.
+- New cloned cookie instances receive fresh IDs and retain an additive
+  `legacySourceId` provenance field.
+- Loading and integrity checking are read-only. A parse failure must never be
+  saved back as an empty vault.
+- Smart JSON updates merge fields and retain local/unmatched cookies rather
+  than replacing a group cookie array.
+- CSV import/export supports `username,password,cookie,banStatus,tags`.
+- Tags and timelines apply equally to main and alternative cookie entries.
+- Confirmed destructive operations create a contractual recovery JSON download
+  before deleting groups/configurations or clearing a vault.
+- Decoy mode blocks data-configuration creation, rename, deletion, and file
+  import so the session cannot leave a persistent configuration trace.
+- The Worker-based cookie checker is user-triggered, stores up to three URLs in
+  `cv_worker_urls`, rotates workers after requests/errors, observes a 10-second
+  timeout, records timeline/status updates, supports current/all-group scope,
+  exports failed statuses, and saves after each completed run.
+- Invalid JSON group records enter an explicit, downloadable quarantine review;
+  valid groups are imported only after user confirmation.
+- Unknown root-level export wrapper fields are retained separately per data
+  configuration and re-emitted on export. Contract fields remain `version`,
+  `exported`, and `vault`.
+- Data Check includes no-write regression coverage for CSV parsing, quarantine,
+  preservation merge behavior, and cookie formatting.
+  Browser automation can load `index.html?sv-regression=1` and assert
+  `body[data-sv-regression="passed"]`.

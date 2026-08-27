@@ -1,0 +1,34 @@
+{
+  "name": "the-fool",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:adoptme": "esbuild frontend/adoptme-preview.jsx --bundle --minify --format=iife --target=es2020 --outfile=assets/adoptme-react.js",
+    "zekehub:login": "node tools/zekehub-capture.mjs --login",
+    "zekehub:capture": "node tools/zekehub-capture.mjs --capture"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lucivaantarez/the-fool.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/lucivaantarez/the-fool/issues"
+  },
+  "homepage": "https://github.com/lucivaantarez/the-fool#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "esbuild": "^0.28.2"
+  },
+  "dependencies": {
+    "lucide-react": "^1.34.0",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "recharts": "^3.10.1"
+  }
+}

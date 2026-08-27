@@ -246,3 +246,45 @@ Never:
 Before major architecture changes, ask.
 
 The goal is a production Saturnity Vault v2.9 application.
+
+---
+
+# v2.9 Preservation Hardening (implemented)
+
+The supplied export already conforms to the contractual wrapper and must not be
+rewritten before import:
+
+```json
+{ "version": 1, "exported": 0, "vault": [] }
+```
+
+The current vault has legacy duplicate cookie IDs. They are valid historical
+data and are reported by the in-app **Data check** surface, not regenerated.
+Newly cloned cookies receive new IDs and retain their source ID in the additive
+`legacySourceId` field.
+
+Migration/import rules:
+
+- Never filter malformed or unknown records on load.
+- Never overwrite a configuration after a parse failure.
+- Smart updates merge cookie objects field-by-field and retain local/future
+  fields and unmatched local cookies.
+- CSV is supported for username, password, cookie, banStatus, and tags.
+- Main and alternative cookies have the same tag/timeline behavior.
+- Confirmed bulk deletion, group merge, configuration deletion, and Forget
+  Everything create a contractual recovery JSON download before mutation.
+- Data configuration creation, rename, deletion, and file import are disabled
+  in decoy mode; no new vault/config data is written in that session.
+- Cookie checking is explicit/user-triggered only and uses up to three saved
+  Cloudflare Worker URLs in `cv_worker_urls`.
+- JSON imports now present an explicit quarantine/review dialog for invalid
+  records, with a downloadable quarantine report. Valid records import only
+  after user confirmation.
+- Unknown root-level JSON wrapper fields are stored per configuration and are
+  emitted again on JSON export, while `version`, `exported`, and `vault` retain
+  their contractual meaning.
+- Data check includes a no-write regression check for CSV parsing, import
+  quarantine, preservation merge behavior, and cookie formatting.
+  Browser automation can run the same checks by loading
+  `index.html?sv-regression=1`; a passing run sets
+  `body[data-sv-regression="passed"]`.
