@@ -1713,6 +1713,18 @@
       "node_kind": "heading",
       "norm_label": "security boundary",
       "source_file": "docs/operations/HOSTING.md",
+      "source_location": "L46"
+    },
+    {
+      "id": "docs_operations_hosting_uptime_supervision",
+      "label": "Uptime supervision",
+      "_origin": "ast",
+      "community": 13,
+      "community_name": "Saturnity hosting workflow",
+      "file_type": "document",
+      "node_kind": "heading",
+      "norm_label": "uptime supervision",
+      "source_file": "docs/operations/HOSTING.md",
       "source_location": "L31"
     },
     {
@@ -8676,13 +8688,24 @@
     },
     {
       "source": "docs_operations_hosting_saturnity_hosting_workflow",
-      "target": "docs_operations_hosting_security_boundary",
+      "target": "docs_operations_hosting_uptime_supervision",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "docs/operations/HOSTING.md",
       "source_location": "L31",
+      "weight": 1.0
+    },
+    {
+      "source": "docs_operations_hosting_saturnity_hosting_workflow",
+      "target": "docs_operations_hosting_security_boundary",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "docs/operations/HOSTING.md",
+      "source_location": "L46",
       "weight": 1.0
     },
     {
@@ -11673,5 +11696,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "c22023df6d579bd0c99b1ad379c74a2b62da05b3"
+  "built_at_commit": "69a3aabf217c6f007371f75f9004e7212f8d660e"
 }
