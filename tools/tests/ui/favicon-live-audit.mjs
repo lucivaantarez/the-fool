@@ -4,7 +4,6 @@ import path from 'node:path';
 
 const hosts = [
   'https://saturnity.site/',
-  'https://fool.saturnity.site/',
   'https://preview.saturnity.site/'
 ];
 const viewports = [

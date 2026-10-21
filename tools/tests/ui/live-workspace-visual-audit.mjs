@@ -15,7 +15,7 @@ const pages = [
   ['preview-cookie-extractor', 'https://preview.saturnity.site/cookie-tools/extractor?uiAudit=1'],
   ['preview-cookie-bulk-lookup', 'https://preview.saturnity.site/cookie-tools/bulk-lookup?uiAudit=1'],
   ['production-root', 'https://saturnity.site/?uiAudit=1'],
-  ['shared-root', 'https://fool.saturnity.site/?uiAudit=1']
+  ['shared-root', 'https://preview.saturnity.site/?shared-preview=1&uiAudit=1']
 ];
 const viewports = [
   ['desktop', 1440, 1000, false],

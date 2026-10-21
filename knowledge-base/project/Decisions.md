@@ -78,3 +78,11 @@
 - Judge Caddy health only by local evidence: its process must own the local `:80` and `:443` listeners. Never restart a local service because a public hostname failed, because DNS and CDN failures are outside this machine's control.
 - Keep exactly one owner per lifecycle. The direct `SaturnityCaddy` start task stays registered but disabled so the watchdog cannot race a second Caddy instance.
 - Keep the Caddy watchdog next to the Caddy configuration instead of in this repository, because the same Caddy instance also serves unrelated projects.
+
+## 2026-10-21 — Reduce public hostnames to the ones that earn a root
+
+- Keep `saturnity.site` and `preview.saturnity.site` as the only active hostnames for this product. They are the only two with a distinct published root and a distinct purpose.
+- Park `fool.saturnity.site`: it had no root of its own and served the identical private production files, so isolation depended entirely on in-app hostname scoping. Merging the shared hub into the main application removes that risk surface instead of hardening it repeatedly.
+- Park by commenting the site block rather than deleting it, and keep the shared-hub code and backend routes intact, so the decision is reversible with one validate and reload.
+- Never link a private surface to a parked hostname. Shared-tools entry points point at the in-app `?shared-preview=1` route on preview and are hidden where no shared surface exists.
+- Give TrackStat its own hostname (`ts.saturnity.site`) when it is genuinely ready, rather than burying a separate product under a preview subpath. Its DNS already resolves to this host, but no site block exists yet and its deployment documents still say preparation only.

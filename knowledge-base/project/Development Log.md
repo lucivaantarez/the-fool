@@ -1,5 +1,15 @@
 # Development Log
 
+## 2026-10-21 - Hostname consolidation and shared-hub entry cleanup
+
+- Parked `fool.saturnity.site`. Backed up the Caddy configuration, commented its site block with the reason, validated, and reloaded with the AI basic-auth/internal-token environment loaded so no secret-dependent block lost its value. Zero downtime: the reload kept one Caddy process.
+- Verified after reload: `saturnity.site` 200, its API 200, `preview.saturnity.site` 200, preview API 200, `/mlbb-lore/` 308, `ai.saturnity.site` 401 (basic auth still enforced, proving the secret loaded), and `fool.saturnity.site` now fails at the edge as intended.
+- Removed every reference to the parked hostname from the private application. The dashboard shared-tools action and the login-gate shared link now target the in-app `?shared-preview=1` route and are injected only on the preview host; the private settings card and PIN modal no longer advertise the hostname. The link is same-origin now, so the `_blank` target was dropped.
+- Updated the anti-slop behavior assertions for the new same-origin target, removed the parked hostname from the live favicon audit, and pointed the shared-root visual audit at the preview shared route.
+- Verification: 50 behavior checks passed, 54 visual captures with no page errors or horizontal overflow, Adopt Me, XLS/XLSX, and Redfinger suites green. Published to preview only; production remains untouched and still carries the older August build by owner decision.
+- Recorded that `ts.saturnity.site` belongs to the separate TrackStat project. Its DNS already points at this host, but no Caddy block exists and its own documents state preparation only, so it stays unserved until it is ready.
+- Known leftover: `SATURNITY_ALLOWED_ORIGINS` still lists the parked origin as a default. It is inert because nothing can send that origin now, and changing backend configuration needs explicit approval.
+
 ## 2026-10-21 - Uptime recovery and repository checkpoint
 
 - Restored local uptime after a five-day outage. Root cause was host lifecycle, not application code: the machine had not rebooted since 2026-09-18 so boot-triggered tasks never fired again, the `Saturnity Backend` watchdog task had been disabled on 10-11, and Caddy stopped on 10-16 with nothing to restart it.
