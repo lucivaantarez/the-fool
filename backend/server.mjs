@@ -3,6 +3,7 @@ import { mkdirSync, existsSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 import { createCipheriv, createDecipheriv, createHash, createHmac, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
 import { join } from 'node:path';
+import { createRedfingerHandler } from './redfinger-service.mjs';
 
 const port = Number(process.env.SATURNITY_PORT || 8787);
 const dataDir = process.env.SATURNITY_DATA_DIR || join(process.cwd(), '..', '..', 'saturnity-data');
@@ -10,6 +11,7 @@ const origin = process.env.SATURNITY_PUBLIC_ORIGIN || 'https://saturnity.site';
 const allowedOrigins = new Set((process.env.SATURNITY_ALLOWED_ORIGINS || `${origin},https://preview.saturnity.site,https://fool.saturnity.site`).split(',').map(value => value.trim()).filter(Boolean));
 const masterKey = Buffer.from(process.env.SATURNITY_MASTER_KEY || '', 'base64');
 const setupToken = process.env.SATURNITY_SETUP_TOKEN || '';
+const tradeLogToken = process.env.SATURNITY_TRADELOG_TOKEN || '';
 if (masterKey.length !== 32) throw new Error('SATURNITY_MASTER_KEY must be a 32-byte base64 value. Run initialize-backend.ps1 first.');
 if (setupToken.length < 32) throw new Error('SATURNITY_SETUP_TOKEN is missing or too short. Run initialize-backend.ps1 first.');
 mkdirSync(dataDir, { recursive: true });
@@ -22,6 +24,11 @@ CREATE TABLE IF NOT EXISTS integration_configs (user_id INTEGER NOT NULL REFEREN
 CREATE TABLE IF NOT EXISTS job_monitor_jobs (user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, job_id TEXT NOT NULL, kind TEXT, status TEXT, total_amount INTEGER, success_amount INTEGER, fail_amount INTEGER, skip_amount INTEGER, refunded_amount INTEGER, note TEXT, priority INTEGER, created_at_text TEXT, last_checked_at INTEGER NOT NULL, PRIMARY KEY(user_id, job_id));
 CREATE TABLE IF NOT EXISTS private_scripts (id TEXT PRIMARY KEY, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, name TEXT NOT NULL, cipher BLOB NOT NULL, iv BLOB NOT NULL, tag BLOB NOT NULL, created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS private_script_tokens (id TEXT PRIMARY KEY, script_id TEXT NOT NULL REFERENCES private_scripts(id) ON DELETE CASCADE, token_hash TEXT NOT NULL UNIQUE, token_cipher BLOB, token_iv BLOB, token_tag BLOB, created_at INTEGER NOT NULL, last_used_at INTEGER, revoked_at INTEGER);`);
+db.exec(`CREATE TABLE IF NOT EXISTS redfinger_snapshots (user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE, payload TEXT NOT NULL, updated_at INTEGER NOT NULL);
+CREATE TABLE IF NOT EXISTS redfinger_events (id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, device_id TEXT, event_type TEXT NOT NULL, message TEXT NOT NULL, created_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS redfinger_events_user_time ON redfinger_events(user_id, created_at DESC);
+CREATE TABLE IF NOT EXISTS trade_logs (id INTEGER PRIMARY KEY AUTOINCREMENT, source TEXT NOT NULL, payload TEXT NOT NULL, received_at INTEGER NOT NULL);
+CREATE INDEX IF NOT EXISTS trade_logs_time ON trade_logs(received_at DESC);`);
 db.exec(`CREATE TABLE IF NOT EXISTS public_tool_config (owner_user_id INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE, pin_hash TEXT NOT NULL, updated_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS public_tool_sessions (token_hash TEXT PRIMARY KEY, expires_at INTEGER NOT NULL, created_at INTEGER NOT NULL);
 CREATE TABLE IF NOT EXISTS fool_shared_scripts (script_id TEXT PRIMARY KEY REFERENCES private_scripts(id) ON DELETE CASCADE, user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE, token_id TEXT NOT NULL REFERENCES private_script_tokens(id) ON DELETE CASCADE, shared_at INTEGER NOT NULL);
@@ -84,6 +91,7 @@ const ownerExists = () => !!db.prepare('SELECT 1 FROM users LIMIT 1').get();
 const requireOrigin = req => !['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) || allowedOrigins.has(req.headers.origin);
 const sessionUser = req => { const token = cookies(req).saturnity_session; if (!token) return null; const row = db.prepare('SELECT u.id,u.username FROM sessions s JOIN users u ON u.id=s.user_id WHERE s.token_hash=? AND s.expires_at>?').get(hashToken(token), now()); return row || null; };
 const requireUser = (req, res) => { const user = sessionUser(req); if (!user) { json(res, 401, { error: 'Authentication required' }); return null; } return user; };
+const handleRedfinger = createRedfingerHandler({ db, json, readBody });
 const publicToolsUnlocked = req => { const token = cookies(req).fool_tools_session; if (!token) return false; return !!db.prepare('SELECT 1 FROM public_tool_sessions WHERE token_hash=? AND expires_at>?').get(hashToken(token), now()); };
 const limits = new Map();
 // The service is bound to localhost and Caddy is the only public proxy. Use its
@@ -93,9 +101,21 @@ const rateAllowed = req => { const key = clientAddress(req), max = req.url.start
 const server = http.createServer(async (req, res) => {
   try {
     if (!rateAllowed(req)) return json(res, 429, { error: 'Too many requests' });
-    if (!requireOrigin(req)) return json(res, 403, { error: 'Invalid request origin' });
     const url = new URL(req.url, origin);
+    if (req.method === 'POST' && url.pathname === '/api/tradelog') {
+      const authorization = String(req.headers.authorization || '');
+      const supplied = authorization.startsWith('Bearer ') ? authorization.slice(7) : '';
+      if (tradeLogToken.length < 32 || supplied.length !== tradeLogToken.length || !timingSafeEqual(Buffer.from(supplied), Buffer.from(tradeLogToken))) return json(res, 401, { error: 'Invalid trade-log token' });
+      const body = await readBody(req), payload = JSON.stringify(body);
+      if (payload.length > 64_000) return json(res, 413, { error: 'Trade log is too large' });
+      const source = String(body?.embeds?.[0]?.footer?.text || body?.source || 'unknown').slice(0, 100);
+      db.prepare('INSERT INTO trade_logs (source,payload,received_at) VALUES (?,?,?)').run(source, payload, now());
+      return json(res, 202, { ok: true });
+    }
+    if (!requireOrigin(req)) return json(res, 403, { error: 'Invalid request origin' });
+    if (url.pathname.startsWith('/api/redfinger')) { const user = requireUser(req, res); if (!user) return; await handleRedfinger(req, res, url, user); return; }
     if (req.method === 'GET' && url.pathname === '/api/health') return json(res, 200, { ok: true, needsSetup: !ownerExists() });
+    if (req.method === 'GET' && url.pathname === '/api/tradelogs') { const user = requireUser(req, res); if (!user) return; const logs = db.prepare('SELECT id,source,payload,received_at AS receivedAt FROM trade_logs ORDER BY received_at DESC LIMIT 100').all().map(row => ({ ...row, payload: JSON.parse(row.payload) })); return json(res, 200, { logs }); }
     if (req.method === 'GET' && url.pathname.startsWith('/api/fool-public-raw/')) { const scriptId = decodeURIComponent(url.pathname.slice('/api/fool-public-raw/'.length)), access = String(url.searchParams.get('access') || ''); if (!/^[A-Za-z0-9_-]{8,100}$/.test(scriptId) || access.length < 32) return text(res, 403, 'Forbidden'); const script = db.prepare('SELECT s.cipher,s.iv,s.tag FROM fool_public_script_tokens t JOIN fool_public_scripts s ON s.id=t.script_id WHERE t.script_id=? AND t.token_hash=?').get(scriptId, hashToken(access)); return script ? text(res, 200, decrypt(script)) : text(res, 403, 'Forbidden'); }
     if (req.method === 'GET' && url.pathname.startsWith('/api/script-raw/')) { const scriptId = decodeURIComponent(url.pathname.slice('/api/script-raw/'.length)); const access = String(url.searchParams.get('access') || ''); if (!/^[A-Za-z0-9_-]{8,100}$/.test(scriptId) || access.length < 32) return text(res, 403, 'Forbidden'); const token = db.prepare('SELECT t.id,s.id AS script_id,s.user_id,s.storage_synced_at,s.cipher,s.iv,s.tag FROM private_script_tokens t JOIN private_scripts s ON s.id=t.script_id WHERE t.script_id=? AND t.token_hash=? AND t.revoked_at IS NULL').get(scriptId, hashToken(access)); if (!token) return text(res, 403, 'Forbidden'); db.prepare('UPDATE private_script_tokens SET last_used_at=? WHERE id=?').run(now(), token.id); if (token.storage_synced_at) { const owner = { id: token.user_id }; try { return res.writeHead(302, { Location: nevaSignedDownload(nevaConfig(owner), scriptObjectKey(owner, token.script_id)), 'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff' }).end(); } catch { /* Preserve existing links if storage is temporarily unavailable. */ } } return text(res, 200, decrypt(token)); }
     if (req.method === 'POST' && url.pathname === '/api/setup') {
