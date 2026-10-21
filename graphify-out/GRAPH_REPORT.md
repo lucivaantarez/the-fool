@@ -1,7 +1,7 @@
-# Graph Report - the-fool  (2026-10-21)
+# Graph Report - the-fool  (2026-10-22)
 
 ## Corpus Check
-- 39 files · ~154,033 words
+- 39 files · ~154,038 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
@@ -10,7 +10,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `69a3aabf`
+- Built from commit: `e1fd21fc`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -54,8 +54,8 @@
 ## God Nodes (most connected - your core abstractions)
 1. `server` - 32 edges
 2. `SATURNITY VAULT — COMPLETE HANDOFF SPECIFICATION` - 18 edges
-3. `The Fool — Long-Term AI Project Context` - 15 edges
-4. `4. Component Library` - 15 edges
+3. `4. Component Library` - 15 edges
+4. `The Fool — Long-Term AI Project Context` - 15 edges
 5. `The Fool Design Specification` - 14 edges
 6. `The Fool — Project Idea and Build Brief` - 12 edges
 7. `Current Features` - 11 edges
@@ -200,7 +200,7 @@ Cohesion: 0.70
 Nodes (4): Get-BackendProcesses(), Start-Backend(), Test-BackendHealth(), Write-WatchdogLog()
 
 ## Knowledge Gaps
-- **243 isolated node(s):** `name`, `private`, `type`, `start`, `node` (+238 more)
+- **243 isolated node(s):** `results`, `errors`, `writes`, `summary`, `hosts` (+238 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -211,7 +211,7 @@ _Questions this graph is uniquely positioned to answer:_
   _High betweenness centrality (0.015) - this node is a cross-community bridge._
 - **Why does `4. Component Library` connect `4. Component Library` to `The Fool Design Specification`?**
   _High betweenness centrality (0.007) - this node is a cross-community bridge._
-- **What connects `name`, `private`, `type` to the rest of the system?**
+- **What connects `results`, `errors`, `writes` to the rest of the system?**
   _243 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `server.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.09898242368177614 - nodes in this community are weakly interconnected._

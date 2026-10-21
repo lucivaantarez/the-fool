@@ -4096,7 +4096,7 @@
       "file_type": "code",
       "norm_label": "outdir",
       "source_file": "tools/tests/ui/favicon-live-audit.mjs",
-      "source_location": "L15"
+      "source_location": "L14"
     },
     {
       "id": "tools_tests_ui_favicon_live_audit_stamp",
@@ -4107,7 +4107,7 @@
       "file_type": "code",
       "norm_label": "stamp",
       "source_file": "tools/tests/ui/favicon-live-audit.mjs",
-      "source_location": "L14"
+      "source_location": "L13"
     },
     {
       "id": "tools_tests_ui_favicon_live_audit_viewports",
@@ -4118,7 +4118,7 @@
       "file_type": "code",
       "norm_label": "viewports",
       "source_file": "tools/tests/ui/favicon-live-audit.mjs",
-      "source_location": "L10"
+      "source_location": "L9"
     },
     {
       "id": "tools_tests_ui_generate_fool_favicon",
@@ -11328,24 +11328,13 @@
     },
     {
       "source": "tools_tests_ui_favicon_live_audit",
-      "target": "tools_tests_ui_favicon_live_audit_viewports",
-      "relation": "contains",
-      "_origin": "ast",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "tools/tests/ui/favicon-live-audit.mjs",
-      "source_location": "L10",
-      "weight": 1.0
-    },
-    {
-      "source": "tools_tests_ui_favicon_live_audit",
       "target": "tools_tests_ui_favicon_live_audit_stamp",
       "relation": "contains",
       "_origin": "ast",
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tools/tests/ui/favicon-live-audit.mjs",
-      "source_location": "L14",
+      "source_location": "L13",
       "weight": 1.0
     },
     {
@@ -11356,7 +11345,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "tools/tests/ui/favicon-live-audit.mjs",
-      "source_location": "L15",
+      "source_location": "L14",
       "weight": 1.0
     },
     {
@@ -11368,6 +11357,17 @@
       "confidence_score": 1.0,
       "source_file": "tools/tests/ui/favicon-live-audit.mjs",
       "source_location": "L5",
+      "weight": 1.0
+    },
+    {
+      "source": "tools_tests_ui_favicon_live_audit",
+      "target": "tools_tests_ui_favicon_live_audit_viewports",
+      "relation": "contains",
+      "_origin": "ast",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "tools/tests/ui/favicon-live-audit.mjs",
+      "source_location": "L9",
       "weight": 1.0
     },
     {
@@ -11696,5 +11696,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "69a3aabf217c6f007371f75f9004e7212f8d660e"
+  "built_at_commit": "e1fd21fceb0e4fbf59af1e82b424004634f6a137"
 }
