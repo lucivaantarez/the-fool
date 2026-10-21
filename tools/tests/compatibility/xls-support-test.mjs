@@ -20,7 +20,8 @@ const fixtures = Object.fromEntries(['xls', 'xlsx'].map(extension => [
 
 const browser = await chromium.launch({ headless: true });
 const page = await browser.newPage();
-await page.goto(process.argv[2] || 'https://preview.saturnity.site', { waitUntil: 'networkidle', timeout: 45_000 });
+await page.goto(process.argv[2] || 'https://preview.saturnity.site', { waitUntil: 'domcontentloaded', timeout: 45_000 });
+await page.waitForFunction(() => window.SaturnityUsernameExtractor?.loadFile, null, { timeout: 45_000 });
 const results = {};
 
 for (const [extension, base64] of Object.entries(fixtures)) {
