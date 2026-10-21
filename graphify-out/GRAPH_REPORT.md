@@ -1,15 +1,16 @@
-# Graph Report - the-fool  (2026-08-28)
+# Graph Report - the-fool  (2026-10-21)
 
 ## Corpus Check
-- cluster-only mode — file stats not available
+- 39 files · ~153,849 words
+- Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 260 nodes · 301 edges · 24 communities (22 shown, 2 thin omitted)
-- Extraction: 98% EXTRACTED · 2% INFERRED · 0% AMBIGUOUS · INFERRED: 5 edges (avg confidence: 0.85)
+- 468 nodes · 553 edges · 42 communities (39 shown, 3 thin omitted)
+- Extraction: 99% EXTRACTED · 1% INFERRED · 0% AMBIGUOUS · INFERRED: 7 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fd85eab5`
+- Built from commit: `c22023df`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -22,7 +23,7 @@
 - SATURNITY_CONTEXT.md
 - backend/package.json
 - zekehub-capture.mjs
-- 8. EXACT LOGIC (the parts most likely to be re-implemented wrong)
+- The Fool Design Specification
 - zekehub-audit.mjs
 - zekehub-adoptme-ui-audit.mjs
 - zekehub-adoptme-detail-audit.mjs
@@ -34,18 +35,33 @@
 - test-adoptme-preview.mjs
 - AGENTS.md
 - Saturnity backend
+- Handler
+- test-redfinger-preview.mjs
+- redfinger-app.js
+- redfinger-service.mjs
+- test-preview-density.mjs
+- 4. Component Library
+- live-workspace-visual-audit.mjs
+- 5. Page Specifications
+- The Fool — Long-Term AI Project Context
+- anti-slop-behavior.mjs
+- favicon-live-audit.mjs
+- generate-fool-favicon.mjs
+- anti-slop-regression.mjs
+- Current Features
+- watch-backend.ps1
 
 ## God Nodes (most connected - your core abstractions)
-1. `server` - 31 edges
+1. `server` - 32 edges
 2. `SATURNITY VAULT — COMPLETE HANDOFF SPECIFICATION` - 18 edges
-3. `8. EXACT LOGIC (the parts most likely to be re-implemented wrong)` - 9 edges
-4. `nevaConfig()` - 7 edges
-5. `s3SignedRequest()` - 7 edges
-6. `Documentation Lookup` - 7 edges
-7. `9. FUNCTION REFERENCE (contracts)` - 7 edges
-8. `now()` - 6 edges
-9. `2. DATA MODELS (EXACT)` - 6 edges
-10. `nevaSignedDownload()` - 5 edges
+3. `The Fool — Long-Term AI Project Context` - 15 edges
+4. `4. Component Library` - 15 edges
+5. `The Fool Design Specification` - 14 edges
+6. `The Fool — Project Idea and Build Brief` - 12 edges
+7. `Current Features` - 11 edges
+8. `5. Page Specifications` - 10 edges
+9. `Core product areas` - 10 edges
+10. `createRedfingerHandler()` - 9 edges
 
 ## Surprising Connections (you probably didn't know these)
 - None detected - all connections are within the same source files.
@@ -53,27 +69,27 @@
 ## Import Cycles
 - None detected.
 
-## Communities (24 total, 2 thin omitted)
+## Communities (42 total, 3 thin omitted)
 
 ### Community 0 - "server.mjs"
 Cohesion: 0.10
-Nodes (45): allowedOrigins, cleanJob(), clientAddress(), cookies(), db, decrypt(), encrypt(), hashToken() (+37 more)
+Nodes (46): allowedOrigins, cleanJob(), clientAddress(), cookies(), db, decrypt(), encrypt(), handleRedfinger (+38 more)
 
 ### Community 1 - "adoptme-preview.jsx"
-Cohesion: 0.07
-Nodes (6): accounts, chart, inventory, nav, templateSections, toolCopy
+Cohesion: 0.10
+Nodes (11): accounts, ages, copyText(), dedupe(), groups, ItemInspector(), itemMeta(), itemNames (+3 more)
 
 ### Community 2 - "package.json"
 Cohesion: 0.08
 Nodes (24): esbuild, author, bugs, url, description, devDependencies, esbuild, @playwright/test (+16 more)
 
 ### Community 3 - "SATURNITY VAULT — COMPLETE HANDOFF SPECIFICATION"
-Cohesion: 0.06
-Nodes (34): 0. TL;DR — WHAT THIS IS, 10. KNOWN ISSUES (design decisions, not bugs), 11. FAILED APPROACHES (DO NOT RETRY), 12. EXPECTED BEHAVIORS (input → output), 13. UI SURFACES (present in the app), 14. DEPENDENCIES, 15. VERSION HISTORY (condensed), 16. v2.9 PRESERVATION HARDENING (+26 more)
+Cohesion: 0.05
+Nodes (43): 0. TL;DR — WHAT THIS IS, 10. KNOWN ISSUES (design decisions, not bugs), 11. FAILED APPROACHES (DO NOT RETRY), 12. EXPECTED BEHAVIORS (input → output), 13. UI SURFACES (present in the app), 14. DEPENDENCIES, 15. VERSION HISTORY (condensed), 16. v2.9 PRESERVATION HARDENING (+35 more)
 
 ### Community 4 - "dependencies"
-Cohesion: 0.22
-Nodes (9): lucide-react, dependencies, lucide-react, react, react-dom, recharts, react, react-dom (+1 more)
+Cohesion: 0.13
+Nodes (15): @base-ui/react, lucide-react, motion, dependencies, @base-ui/react, lucide-react, motion, react (+7 more)
 
 ### Community 5 - "SATURNITY_CONTEXT.md"
 Cohesion: 0.12
@@ -87,9 +103,9 @@ Nodes (7): engines, node, name, private, scripts, start, type
 Cohesion: 0.20
 Nodes (8): captureDir, captureMode, dataPath, loginMode, screenshotPath, sessionDir, timestamp, visibleText
 
-### Community 8 - "8. EXACT LOGIC (the parts most likely to be re-implemented wrong)"
-Cohesion: 0.22
-Nodes (9): 8. EXACT LOGIC (the parts most likely to be re-implemented wrong), calcHealthScore() → {score, grade}, esc(s) — HTML escape (NOTE: does NOT escape single quotes), expTxt(g) — per-group .txt export (main cookies only; alts omitted — ISSUE-04), fmtLine(c, fmt) → string, getCopyFmt() — smart copy format (per cookie), Group ID generation, "Move matched" (v2.9 Bulk Lookup feature) (+1 more)
+### Community 8 - "The Fool Design Specification"
+Cohesion: 0.05
+Nodes (36): 10. Future Design Roadmap, 11. Design Decisions Log, 12. AI Development Guidelines, 1. Product Identity, 2. Visual Design System, 3. UI Structure, 6. Interaction Design, 7. Data Presentation (+28 more)
 
 ### Community 9 - "zekehub-audit.mjs"
 Cohesion: 0.22
@@ -120,32 +136,88 @@ Cohesion: 0.17
 Nodes (11): Authentication, Common Mistakes, Documentation Lookup, Error Handling, Result fields, Selection process, Step 1: Resolve a Library, Step 2: Query Documentation (+3 more)
 
 ### Community 22 - "AGENTS.md"
-Cohesion: 0.29
-Nodes (6): Coding and terminal workflow, graphify, Project knowledge workflow, Protected data and compatibility rules, Repository architecture, Steps
+Cohesion: 0.25
+Nodes (7): Coding and terminal workflow, graphify, Hermes communication rules, Project knowledge workflow, Protected data and compatibility rules, Repository architecture, Steps
 
 ### Community 23 - "Saturnity backend"
 Cohesion: 0.50
 Nodes (3): First run, Saturnity backend, Security properties
 
+### Community 24 - "Handler"
+Cohesion: 0.18
+Nodes (6): AccountSession, Handler, Local-only bridge between The Fool and the verified Redfinger inventory reader.…, BaseHTTPRequestHandler, BrowserSession, Path
+
+### Community 25 - "test-redfinger-preview.mjs"
+Cohesion: 0.29
+Nodes (4): errors, mobileDensityLabel, remainingFont, tabletDensityLabel
+
+### Community 26 - "redfinger-app.js"
+Cohesion: 0.25
+Nodes (10): addLocalEvent(), api(), captureMarkup(), loadInventory(), notify(), openLogs(), render(), renderLogs() (+2 more)
+
+### Community 27 - "redfinger-service.mjs"
+Cohesion: 0.30
+Nodes (13): bridgeEndpoint(), bridgeRequest(), bridgeToken, bridgeUrl, cleanStatus(), cleanText(), configured(), createRedfingerHandler() (+5 more)
+
+### Community 31 - "4. Component Library"
+Cohesion: 0.13
+Nodes (15): 4. Component Library, Buttons, Cards and surfaces, Charts, Dialogs and confirmations, Drawers and inspectors, Empty states, Filters (+7 more)
+
+### Community 32 - "live-workspace-visual-audit.mjs"
+Cohesion: 0.29
+Nodes (6): outDir, pages, stamp, summary, summaryFile, viewports
+
+### Community 33 - "5. Page Specifications"
+Cohesion: 0.20
+Nodes (10): 5. Page Specifications, Account Tools, Adopt Me Operations, Cookie Tools, Dashboard, Data Center and Private Settings, Redfinger Operations, Scripts (+2 more)
+
+### Community 34 - "The Fool — Long-Term AI Project Context"
+Cohesion: 0.07
+Nodes (34): AI Agent Instructions, Backend, Component communication and data flow, Core Concept, Current Architecture, Current limitations, Current State, Definition of success (+26 more)
+
+### Community 35 - "anti-slop-behavior.mjs"
+Cohesion: 0.18
+Nodes (4): errors, results, summary, writes
+
+### Community 36 - "favicon-live-audit.mjs"
+Cohesion: 0.40
+Nodes (4): hosts, outDir, stamp, viewports
+
+### Community 37 - "generate-fool-favicon.mjs"
+Cohesion: 0.50
+Nodes (3): pngPath, root, svgPath
+
+### Community 38 - "anti-slop-regression.mjs"
+Cohesion: 0.40
+Nodes (3): routes, rows, summary
+
+### Community 40 - "Current Features"
+Cohesion: 0.29
+Nodes (12): 1. Private Dashboard, 2. Saturnity Vault, 3. Bulk Lookup, 4. Account and Username Tools, 5. Cookie/API Tools, 6. Script Repository, 7. Shared Hub, 8. Adopt Me Operations (+4 more)
+
+### Community 41 - "watch-backend.ps1"
+Cohesion: 0.70
+Nodes (4): Get-BackendProcesses(), Start-Backend(), Test-BackendHealth(), Write-WatchdogLog()
+
 ## Knowledge Gaps
-- **140 isolated node(s):** `accounts`, `inventory`, `allowedOrigins`, `db`, `limits` (+135 more)
+- **242 isolated node(s):** `name`, `private`, `type`, `start`, `node` (+237 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **2 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **3 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `SATURNITY VAULT — COMPLETE HANDOFF SPECIFICATION` connect `SATURNITY VAULT — COMPLETE HANDOFF SPECIFICATION` to `8. EXACT LOGIC (the parts most likely to be re-implemented wrong)`?**
-  _High betweenness centrality (0.024) - this node is a cross-community bridge._
-- **Why does `8. EXACT LOGIC (the parts most likely to be re-implemented wrong)` connect `8. EXACT LOGIC (the parts most likely to be re-implemented wrong)` to `SATURNITY VAULT — COMPLETE HANDOFF SPECIFICATION`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
-- **What connects `accounts`, `inventory`, `allowedOrigins` to the rest of the system?**
-  _140 weakly-connected nodes found - possible documentation gaps or missing edges._
+- **Why does `The Fool Design Specification` connect `The Fool Design Specification` to `5. Page Specifications`, `4. Component Library`?**
+  _High betweenness centrality (0.015) - this node is a cross-community bridge._
+- **Why does `4. Component Library` connect `4. Component Library` to `The Fool Design Specification`?**
+  _High betweenness centrality (0.007) - this node is a cross-community bridge._
+- **What connects `name`, `private`, `type` to the rest of the system?**
+  _242 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `server.mjs` be split into smaller, more focused modules?**
-  _Cohesion score 0.10144927536231885 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09898242368177614 - nodes in this community are weakly interconnected._
 - **Should `adoptme-preview.jsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.06896551724137931 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1 - nodes in this community are weakly interconnected._
 - **Should `package.json` be split into smaller, more focused modules?**
   _Cohesion score 0.08 - nodes in this community are weakly interconnected._
 - **Should `SATURNITY VAULT — COMPLETE HANDOFF SPECIFICATION` be split into smaller, more focused modules?**
-  _Cohesion score 0.05714285714285714 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.045454545454545456 - nodes in this community are weakly interconnected._
