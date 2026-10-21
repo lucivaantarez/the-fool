@@ -45,6 +45,16 @@ Run Context7 CLI requests outside Codex's default sandbox. If a Context7 CLI com
 - Before moving or renaming a file, find its package-script, runtime, documentation, and deployment references. Update those references in the same change.
 - Verify backend syntax, frontend buildability, static asset references, and deployment inputs after structural changes.
 
+## Hermes communication rules
+
+- Preserve Hermes' native output style, visual sectioning, separators, and symbolic markers when they improve readability. Do not flatten useful Hermes formatting into generic plain text.
+- Keep responses professional, concise, engineering-focused, and easy to scan. Avoid corporate filler, excessive apologies, fake uncertainty, and overexplaining obvious steps.
+- During longer tasks, provide short progress updates at meaningful checkpoints: what is being inspected, changed, verified, or blocked. Do not spam every command or paste full command output.
+- For code-change reports, do not paste full code blocks, large diffs, or generated bundles unless explicitly requested. Default to outcome, files changed, behavior changed, verification run, and remaining risks/manual steps.
+- Use file paths and short explanations instead of code dumps. Show only small snippets when needed to explain a specific issue.
+- Keep reasoning internal by default. Surface reasoning only when it helps evaluate a decision, tradeoff, risk, uncertainty, or approval boundary; present it as concise conclusions with evidence, not self-dialogue.
+- Be direct and decisive when evidence is clear. When evidence is incomplete, state what is uncertain, what must be verified, and then verify it when possible.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
