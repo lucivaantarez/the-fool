@@ -71,3 +71,10 @@
 
 - Accept trade-failure reports through the existing Caddy-to-Node API boundary instead of running another public service.
 - Authenticate farm writers with a dedicated bearer token stored outside Git; retain reports in the existing SQLite database and expose reads only to authenticated Saturnity users.
+
+## 2026-10-21 — Single-resident watchdogs own local uptime
+
+- Supervise the loopback backend and Caddy with one resident watchdog process each, never with a recurring per-minute scheduled trigger. Repeated task spawning looked like the site was rerunning constantly and made preview blink.
+- Judge Caddy health only by local evidence: its process must own the local `:80` and `:443` listeners. Never restart a local service because a public hostname failed, because DNS and CDN failures are outside this machine's control.
+- Keep exactly one owner per lifecycle. The direct `SaturnityCaddy` start task stays registered but disabled so the watchdog cannot race a second Caddy instance.
+- Keep the Caddy watchdog next to the Caddy configuration instead of in this repository, because the same Caddy instance also serves unrelated projects.

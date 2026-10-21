@@ -1,5 +1,14 @@
 # Development Log
 
+## 2026-10-21 - Uptime recovery and repository checkpoint
+
+- Restored local uptime after a five-day outage. Root cause was host lifecycle, not application code: the machine had not rebooted since 2026-09-18 so boot-triggered tasks never fired again, the `Saturnity Backend` watchdog task had been disabled on 10-11, and Caddy stopped on 10-16 with nothing to restart it.
+- Restarted the loopback backend and Caddy, re-enabled the backend watchdog, and verified `127.0.0.1:8787/api/health`, preview, production, and shared hosts all return 200 with valid certificates.
+- Added `C:\caddy\watch-caddy.ps1` and the `Saturnity Caddy Watchdog` task so Caddy has the same single-resident-process supervision as the backend, and disabled the old direct `SaturnityCaddy` start task to keep one lifecycle owner. Proved recovery by killing Caddy: local `:443` returned within about ten seconds and the public hosts returned 200 again, with no duplicate instance.
+- Documented both watchdogs in `docs/operations/HOSTING.md`.
+- Checkpointed the long-running working tree into eight scoped commits covering the Redfinger service boundary and trade-log ingestion, the backend watchdog, the standalone Redfinger workspace, the Operations OS preview presentation layer through v247, the read-only Adopt Me watcher, the anti-slop verification gate, project/design documentation, and the refreshed code graph. No secrets, databases, vault exports, or session data were added.
+- Verification gate passed on the committed tree: 50 behavior checks, 54 visual captures with no page errors or horizontal overflow, Adopt Me navigation, XLS/XLSX compatibility, and the Redfinger fleet suite. Published preview files remain byte-identical to the repository entrypoints.
+
 ## 2026-09-14 - Operations OS navigation and Adopt Me Watcher cleanup
 
 - v204: Enlarged Redfinger mobile passive-detail affordances into readable dark rounded pills while preserving the read-only sample fleet, passive capture wording, and disabled provider-command boundary.

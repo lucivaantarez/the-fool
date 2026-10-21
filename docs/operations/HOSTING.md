@@ -28,6 +28,21 @@ Each published folder contains the approved `index.html`, the standalone Adopt M
 
 No Caddy restart is needed when publishing static files. Reload Caddy only after changing `C:\caddy\Caddyfile`.
 
+## Uptime supervision
+
+Two persistent watchdogs own local process uptime. Neither uses a recurring per-minute trigger: repeated task spawning previously made the terminal manager look like it was rerunning the site every minute and made preview blink.
+
+| Scheduled task | Script | Checks every | Action when unhealthy |
+| --- | --- | --- | --- |
+| `Saturnity Backend` | `backend/watch-backend.ps1` | 15 s | Restarts only the loopback listener on `127.0.0.1:8787` |
+| `Saturnity Caddy Watchdog` | `C:\caddy\watch-caddy.ps1` | 15 s | Restarts Caddy through `C:\caddy\run-saturnity-caddy.cmd` |
+
+Both tasks start at boot and at logon, stay resident, and log to a local file: `%LOCALAPPDATA%\Saturnity\backend-watchdog.log` and `C:\caddy\logs\caddy-watchdog.log`. Neither log records secrets or environment values.
+
+The Caddy watchdog treats Caddy as healthy only when its process exists and still owns the local `:80` and `:443` listeners. It deliberately never probes a public hostname, so DNS or CDN failures outside this machine cannot trigger a local restart.
+
+`SaturnityCaddy` is kept registered but disabled. The watchdog is the single owner of the Caddy lifecycle; re-enabling the old task would start a second competing instance.
+
 ## Security boundary
 
 The browser application uses a private Node.js backend for server login, encrypted vault synchronization, scripts, and integration configuration. Caddy forwards `/api/*` to the backend on `127.0.0.1:8787`; static files are served from the isolated published roots.
